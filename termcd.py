@@ -5,13 +5,17 @@ import sys, os
 import time
 import math
 
-def printUsageExitErr():
-    stderr.write("usage: python3 "+sys.argv[0]+" TIME\n\
-    time: The time to count down from in seconds. Use the \"m\" suffix to specify in minutes.\n")
-    sys.exit(1)
+def printUsageAndExit(code=1):
+    stderr.write("Usage: python3 "+sys.argv[0]+" TIME\n\
+    TIME                 The time to count down from in seconds. Use the \"m\" suffix to specify in minutes.\n\
+    -h        --help     Print help message.\n\
+")
+    sys.exit(code)
 
 if len(argv) != 2:
-    printUsageExitErr()
+    printUsageAndExit()
+if argv[1] == "-h" or argv[1] == "--help":
+    printUsageAndExit(0)
 
 try:
     arg = argv[1]
@@ -19,7 +23,7 @@ try:
         arg = arg[:-1]+"*60"
     COUNT_DOWN_FROM = int(eval(arg))
 except:
-    printUsageExitErr()
+    printUsageAndExit()
 
 DIGITS = {
 "0":
