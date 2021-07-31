@@ -6,23 +6,31 @@ import time
 import math
 
 def printUsageAndExit(code=1):
-    stderr.write("Usage: python3 "+sys.argv[0]+" TIME\n\
-    TIME                 The time to count down from in seconds. Use the \"m\" suffix to specify in minutes.\n\
-    -h        --help     Print help message.\n\
+    stderr.write("Usage: python3 "+sys.argv[0]+" [OPTION]... [TIME]\n\
+    TIME                      The time to count down from in seconds. Use the \"m\" suffix to specify in minutes.\n\
+    -n        --no-colors     Don't color the output.\n\
+    -h        --help          Print help message.\n\
 ")
     sys.exit(code)
 
-if len(argv) != 2:
+if len(argv) < 2:
     printUsageAndExit()
-if argv[1] == "-h" or argv[1] == "--help":
-    printUsageAndExit(0)
 
-try:
-    arg = argv[1]
-    if arg[-1] == "m":
-        arg = arg[:-1]+"*60"
-    COUNT_DOWN_FROM = int(eval(arg))
-except:
+USE_COLORS = True
+COUNT_DOWN_FROM = 0
+for arg in argv[1:]:
+    if arg == "-h" or arg == "--help":
+        printUsageAndExit(0)
+    elif arg == "-n" or arg == "--no-colors":
+        USE_COLORS = False
+    else:
+        try:
+            if arg[-1] == "m":
+                arg = arg[:-1]+"*60"
+            COUNT_DOWN_FROM = int(eval(arg))
+        except:
+            printUsageAndExit()
+if COUNT_DOWN_FROM < 1:
     printUsageAndExit()
 
 DIGITS = {
@@ -266,8 +274,10 @@ while True:
         remainingTime = max(int(COUNT_DOWN_FROM-(time.time()-START_TIME)+1), 0)
  
         clearScreen()
-        r, g, b = abs(math.sin(time.time()/10)), abs(math.cos(time.time()/10)), 1-abs(math.sin(time.time()/3))
-        print("\033[38;2;{};{};{}m".format(int(r*255), int(g*255), int(b*255)))
+        if USE_COLORS:
+            r, g, b = abs(math.sin(time.time()/10)), abs(math.cos(time.time()/10)), 1-abs(math.sin(time.time()/3))
+            print("\033[38;2;{};{};{}m".format(int(r*255), int(g*255), int(b*255)))
+
         formattedRemainingTime = str(remainingTime//60).zfill(2)+":"+str(remainingTime%60).zfill(2)
         printDigits(formattedRemainingTime)
         
