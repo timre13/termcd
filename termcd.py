@@ -7,7 +7,7 @@ import math
 
 def printUsageAndExit(code=1):
     stderr.write("Usage: python3 "+sys.argv[0]+" [OPTION]... [TIME]\n\
-    TIME                      The time to count down from in seconds. Use the \"m\" suffix to specify in minutes.\n\
+    TIME                      The time to count down from, specified in the MM:SS format. Minutes can be omitted if 0.\n\
     -n        --no-colors     Don't color the output.\n\
     -h        --help          Print help message.\n\
 ")
@@ -25,9 +25,16 @@ for arg in argv[1:]:
         USE_COLORS = False
     else:
         try:
-            if arg[-1] == "m":
-                arg = arg[:-1]+"*60"
-            COUNT_DOWN_FROM = int(eval(arg))
+            values = tuple(int(x) for x in arg.split(":"))
+            if len(values) == 2:
+                minutes, seconds = values
+            elif len(values) == 1:
+                minutes = 0
+                seconds = values[0]
+            else:
+                printUsageAndExit()
+
+            COUNT_DOWN_FROM = minutes*60+seconds
         except:
             printUsageAndExit()
 if COUNT_DOWN_FROM < 1:
